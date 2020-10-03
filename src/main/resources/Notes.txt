@@ -1,0 +1,6 @@
+1) For-Each Loop
+	a) It will not impact the payload - Input and Ouput payload will remain same 
+	b) variables values can be modified with-in the loop and are propagated outside the loop as well
+	   b.1) counter : is internal variable which we can use to know the current iteration
+	c) batchsize : you can create batches of messages using this for faster processing
+	

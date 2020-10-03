@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<flow name="choice-routerFlow" doc:id="9151198f-36e7-43e2-8b62-fb6fd4df55b7" >
-		<http:listener doc:name="Listener" doc:id="d33a1118-cb40-4707-bc2b-45989434822a" config-ref="HTTP_Listener_config" path="/first-choice"/>
+		<http:listener doc:name="Listener" doc:id="d33a1118-cb40-4707-bc2b-45989434822a" path="/first-choice" config-ref="HTTP_Listener_config"/>
 		<set-variable value="#[output application/java---
 attributes.headers.Choice as Number]" doc:name="Set Variable" doc:id="6e8881f1-e14b-446e-b142-4f3ca026fc9c" variableName="currentChoice"/>
 		<choice doc:name="Choice" doc:id="d63327a4-c072-4a9b-aeaf-8c98905902f6" >
