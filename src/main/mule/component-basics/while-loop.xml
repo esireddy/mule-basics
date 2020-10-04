@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="WhileLoop-Simulation" doc:id="7dd254d9-4d1c-44ef-bb75-3cd063df94b7" >
+		<http:listener doc:name="Listener" doc:id="85922c9f-bef2-41ab-9309-18005f1e2347" config-ref="HTTP_Listener_config" path="/while-loop"/>
+		<set-variable value="#[attributes.queryParams.count as Number]" doc:name="Set Variable" doc:id="e2b607b6-aa6e-40f0-bf28-7b23417d72f3" variableName="loopCount"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c5e72503-2fee-4f3c-9be2-4884274e25a2" message="Starting Loop -&gt; counter value : #[vars.loopCount]"/>
+		<flow-ref doc:name="Call while-loop" doc:id="0f68b957-3707-40a7-8f95-694d03c4f2f2" name="while-loop-flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7b3fd8a9-4a69-4294-b21d-13f2dc977583" message="Ending Loop -&gt; counter value : #[vars.loopCount]"/>
+	</flow>
+	<flow name="while-loop-flow" doc:id="14f627a7-b8a0-4531-b090-2c2a66e152f9" >
+		<choice doc:name="Choice" doc:id="3521ff75-d885-498d-b2bf-91c2767d02d1" >
+			<when expression="vars.loopCount &gt; 0">
+				<logger level="INFO" doc:name="Logger" doc:id="1735fd6d-e446-4381-a824-f60c04695ea9" message="current loop count : #[vars.loopCount]" />
+				<set-variable doc:name="Set Variable" doc:id="7ccbd174-f02f-4c7c-9278-59edc2840737" variableName="loopCount" value="#[vars.loopCount - 1 default 0]"/>
+				<flow-ref doc:name="Flow Reference" doc:id="241a9400-ee81-4e22-8ae8-cc23f3389fdd" name="while-loop-flow" targetValue="payload"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="34b58d84-ca15-449d-8a2c-8ca61023b701" message="Exiting the while loop!!!"/>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

@@ -4,3 +4,11 @@
 	   b.1) counter : is internal variable which we can use to know the current iteration
 	c) batchsize : you can create batches of messages using this for faster processing
 	
+	
+
+	
+	
+	
+Flow Reference:
+	a) Sometimes you need to execute a flow that uses the current payload and variables, but you want the Mule message to remain unchanged after such process. In this case, you can use a target variable to store the results of the referenced flow processing without changing the original message.
+	b) Setting the target variable in a Flow Reference component causes the original message to remain unchanged. This means that any modification to the payload or to the variables that occur in the referenced flow revert after the referenced flow finishes executing its processors, returning the payload and variables to their original values.
