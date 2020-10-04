@@ -1,0 +1,26 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Records">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:string" name="storenumber"/>
+        <xs:element type="xs:string" name="calculated"/>
+        <xs:element type="xs:byte" name="subTotal"/>
+        <xs:element name="RecordsEntries">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="RecordEntry" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="deliverycharge"/>
+                    <xs:element type="xs:byte" name="entryNumber"/>
+                    <xs:element type="xs:string" name="Value"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

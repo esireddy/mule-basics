@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+	<flow name="manipulate-xmlFlow" doc:id="6e632d33-1c83-40cc-a768-752cf567a9c9" >
+		<http:listener doc:name="Listener" doc:id="2b426fee-26fe-4056-9f6e-66a3d7490e83" config-ref="HTTP_Listener_config" path="/xml"/>
+		<file:read doc:name="Read" doc:id="9e873ebd-46a2-428f-b0b1-7063ee3226ec" target="xmlDoc" config-ref="File_Config" path="C:\Code\MuleSoft\mulesoft-basics\src\main\resources\Mock_XML_Example.xml"/>
+		<set-payload value='#[vars.xmlDoc]' doc:name="Set Payload" doc:id="ee9bb4ec-cd85-4471-988e-603de7c20401" mimeType="application/xml"/>
+		<try doc:name="Try" doc:id="0a10f4f5-ac61-4eda-a212-6e63c0d5e294" >
+			<xml-module:validate-schema doc:name="Validate schema" doc:id="d0507bb7-828a-4da3-9fe6-50368ec4fecd" schemas="Mock_XML_Schema.xsd">
+			<xml-module:content><![CDATA[#[vars.xmlDoc]]]></xml-module:content>
+		</xml-module:validate-schema>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="d6bafe16-9932-496b-bef7-3e9a7d57e02e" type="XML-MODULE:SCHEMA_NOT_HONOURED">
+					<foreach doc:name="For Each" doc:id="02ea021f-f2bc-4b3a-a26f-e94af067d74d" collection="error.errorMessage.payload">
+						<logger level="INFO" doc:name="Logger" doc:id="bd40a67e-747a-494d-9851-76e447634de5" message="#['At line: $(payload.lineNumber), column: $(payload.columnNumber) -&gt; $(payload.description)']"/>
+					</foreach>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<set-variable value="#[attributes.queryParams.op]" doc:name="Set Variable" doc:id="175761ee-ee24-4643-90cd-d23d906d3c82" variableName="currentOperation"/>
+		<choice doc:name="Choice" doc:id="a3ca7d3b-b197-4c70-9d26-761ee05f75e3" >
+			<when expression="#[vars.currentOperation == 'tojson']">
+				<ee:transform doc:name="Transform Message" doc:id="97bc3a30-34d2-466a-b0c5-a618d741243d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json	
+---
+{
+	Orders: {
+		Order: vars.xmlDoc.Records.RecordsEntries.*RecordEntry map ((item, index) -> {
+                StoreID : payload.Records.StoreNumber,
+			    Total   : payload.Records.calculated,
+			    SubTotal: payload.Records.subTotal,
+				Number:item.entryNumber,
+                DeliverCharge:item.deliverycharge
+		})
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="950af780-c30d-4405-a2ad-0964ff972107" />
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="9116301e-1c28-40f9-9298-5ccefe0725a1" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="3bc95cb2-484d-4ad3-9a4a-c3156daabfb0" />
+				<set-payload value="Invalid operation" doc:name="Set Payload" doc:id="a45dfbdf-6fad-40da-9e16-9dd38ab16d66" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
