@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="32667e06-7a35-4b87-9d59-e7e235bca053" >
+		<db:mssql-connection host="localhost" instanceName="SQLEXPRESS" port="1433" user="esireddy" password="Citrix@1234" databaseName="AdventureWorks2019" />
+	</db:config>
+	<flow name="mule-readdata-flow" doc:id="35f9c1d6-1936-45e2-bad6-1f600b79e93f" >
+		<http:listener doc:name="Listener" doc:id="6736b85b-b925-40f1-8c1c-bcd95473fcd4" config-ref="HTTP_Listener_config" path="/try-sql"/>
+		<db:select doc:name="Select" doc:id="ec15a67e-6c8f-4ca3-b034-9e73ded021b6" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM [Person].[Address]]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="05417ca5-5c0d-4416-8dc8-7c343692830c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json	
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
